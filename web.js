@@ -7,14 +7,15 @@ var app = express();
 var connect = require('connect');
 var hbs = require('hbs');
 var routes = require('./server/routes');
+var db = require('./server/utils/db');
 
 /** 
  * Configuration
  */
 
-hbs.registerPartials(__dirname + '/client/src/views/partials');
+hbs.registerPartials(__dirname + '/server/views/partials');
 
-app.set('views', __dirname + '/client/src/views');
+app.set('views', __dirname + '/server/views');
 app.set('view engine', 'hbs');
 app.use(express.bodyParser());
 app.use(connect.compress());
@@ -31,7 +32,9 @@ app.configure('production', function(){
   app.use(express.errorHandler());
 });
 
+db.init();
 routes(app);
+
 
 var port = process.env.PORT || 5000;
 app.listen(port, function() {
