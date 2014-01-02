@@ -1,10 +1,11 @@
 module.exports = function (grunt) {
 
+    grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-nodemon');
 
     grunt.initConfig({
 
@@ -29,6 +30,19 @@ module.exports = function (grunt) {
 
         clean: ['client/public/stylesheets/main.css'],
 
+        nodemon: {
+          dev: {
+            options: {
+              file: 'web.js',
+              ignoredFiles: ['node_modules/**', '.git/**'],
+              watchedExtensions: ['js', 'hbs'],
+              watchedFolders: ['server', '.'],
+              delayTime: 1,
+              cwd: __dirname
+            }
+          }
+        },
+
         watch: {
             files: ['client/src/stylesheets/*.scss', 'client/src/javascripts/**/*.js', 'client/src/views/**/*.hbs'],
             tasks: ['sass', 'browserify'],
@@ -41,8 +55,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', ['clean', 'jshint', 'sass', 'browserify', 'watch']);
     grunt.registerTask('dist', ['clean', 'jshint', 'sass', 'test']);
-
+    grunt.registerTask('run', ['nodemon']);
     grunt.registerTask('default', ['build']);
-
 };
 
