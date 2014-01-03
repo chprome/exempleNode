@@ -1,25 +1,29 @@
-body{
-  font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
-}
+body {
+  font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif; }
 
 .menu {
-  background: red;
-}
-
-.menu .menu-top {
-  margin: 0 20%;
-  background: black;
-  color: white;
-  text-align: center; 
-}
-
-.footer {
-  background: blue;
-}
+  background: #25373F; }
+  .menu .menu-top {
+    margin: 0 20%;
+    color: white;
+    text-align: center;
+    margin-bottom: 25px; }
 
 .footer .copy {
   margin: 0 20%;
   background: white;
   color: black;
-  text-align: center; 
-}
+  text-align: center; }
+
+.tableauDesActions {
+  border: 2px solid #A3B0B7;
+  border-collapse: collapse;
+  margin-bottom: 25px; }
+
+.tableauDesActions tr:first-child {
+  text-align: center;
+  background: #A3B0B7;
+  color: white; }
+
+.tableauDesActions td {
+  border-top: 1px solid #A3B0B7; }
