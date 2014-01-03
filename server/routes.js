@@ -1,6 +1,6 @@
 //?
 
-var ActionModel = require('./controllers/Action');
+var ActionController = require('./controllers/Action');
 
 module.exports = function setup(app) {
 
@@ -10,6 +10,6 @@ module.exports = function setup(app) {
 		});
 	});
 
-	app.get('/action', ActionModel.get);
-	app.post('/action', ActionModel.save);
+	app.get('/action', ActionController.get);
+	app.post('/action', ActionController.save);
 };
