@@ -1,28 +1,27 @@
 //?
 
 var ActionModel = require('../models/Action');
-var action;
-
-
-ActionModel.findOne({}, function (err, _action) {
-    if(_action) {
-        action = _action;
-    } else {
-        action = new ActionModel();
-        action.save();
-    }
-});
 
 
 module.exports = {
 
     get : function get(req, res) {
-        res.json(action);
+        // Action asynchrone
+        ActionModel.find(function (err, actions) {
+            if (err) {
+                // TODO handle err  
+            }
+            res.json(actions);
+        });
     },
 
     save : function save(req, res) {
-            action.save();
-            res.json(action);
+        // TODO gérer les erreurs suite au save (ex: String dans un Number)
+        // TODO gérer les dates
+        // TODO y'a certainement un moyen plus clean de faire ça
+        var action = new ActionModel(req.body);
+        action.save();
+        res.json();
     }
 
 };
