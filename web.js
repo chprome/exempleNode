@@ -1,11 +1,10 @@
-/**
- * Module dependencies.
- */
-
+//?
 var express = require('express');
 var app = express();
 var connect = require('connect');
 var hbs = require('hbs');
+
+
 var routes = require('./server/routes');
 var db = require('./server/utils/db');
 
@@ -40,4 +39,3 @@ var port = process.env.PORT || 5000;
 app.listen(port, function() {
   console.log('Listening on http://localhost:'+ port);
 });
- 
