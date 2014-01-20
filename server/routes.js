@@ -6,4 +6,5 @@ module.exports =  function setup(app) {
 
   app.get('/personne', Personne.get);
   app.post('/personne', Personne.save);
+  app.put('/personne/:id', Personne.update);
 };
