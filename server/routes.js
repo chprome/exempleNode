@@ -8,4 +8,5 @@ module.exports =  function setup(app) {
   app.get('/personnes', Personne.fetch);
   app.post('/personne', Personne.save);
   app.put('/personne/:id', Personne.update);
+  app.delete('/personne/:id', Personne.destroy);
 };

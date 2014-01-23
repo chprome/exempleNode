@@ -108,10 +108,19 @@ var PersonneView = Backbone.View.extend({
     initialize: function(){
         this.model.bind('change', this.render.bind(this));
     },
+
+    events : {
+        'click .destroy' : 'destroy'
+    },
+
     render: function(){
         var html = _.template( this.template, this.model.toJSON() );
         this.$el.html(html);
         return this;
+    },
+
+    destroy: function() {
+        this.model.destroy({wait: true});
     }
 });
     
@@ -130,6 +139,7 @@ var PersonneCollectionView = Backbone.View.extend({
 
     initialize: function(){
         _.bindAll(this, 'addAll', 'addOne');
+        this.collection.bind('remove', this.addAll);
         this.collection.bind('add', this.addOne);
         this.collection.bind('reset', this.addAll);
     },

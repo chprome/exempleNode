@@ -29,6 +29,17 @@ module.exports = {
         }
     },
 
+    destroy : function destroy(req, res) {
+        Personne.findOne({_id : req.params.id}, function (err, personne) {
+            if(err) {
+                res.json(404, 'Personne introuvable');
+            } else {
+                personne.remove();
+                res.json(200);
+            }
+        });
+    },
+
     fetch : function findAll(req, res) {
         Personne.find({}, function(err, personnes) {
             res.json(personnes);
