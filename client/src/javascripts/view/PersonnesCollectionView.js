@@ -4,6 +4,7 @@ var Backbone = require('backbone'),
 
 var PersonneCollectionView = Backbone.View.extend({
     el: $('#personnes-wrapper'),
+    template: $('#personnes-tpl').html(),
 
     initialize: function(){
         _.bindAll(this, 'renderAll', 'renderInit');
@@ -13,14 +14,14 @@ var PersonneCollectionView = Backbone.View.extend({
     },
 
     renderInit: function(){
-        var template = _.template( $('#personnes-tpl').html(), {init: true} );
-        this.$el.html(template);
+        var html = _.template(this.template , {init: true} );
+        this.$el.html(html);
         return this;
     },
 
     renderAll: function(){
-        var template = _.template( $('#personnes-tpl').html(), {init: false, personnes: this.collection.toJSON()} );
-        this.$el.html(template);
+        var html = _.template( this.template, {init: false, personnes: this.collection.toJSON()} );
+        this.$el.html(html);
         return this;
     }
 });

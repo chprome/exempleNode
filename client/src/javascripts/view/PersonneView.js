@@ -4,13 +4,14 @@ var Backbone = require('backbone'),
 
 var PersonneView = Backbone.View.extend({
     el: $('#personne-wrapper'),
+    template: $('#personne-tpl').html(),
 
     initialize: function(){
         this.model.bind('change', this.render.bind(this));
     },
     render: function(){
-        var template = _.template( $('#personne-tpl').html(), this.model.toJSON() );
-        this.$el.html(template);
+        var html = _.template( this.template, this.model.toJSON() );
+        this.$el.html(html);
         return this;
     }
 });

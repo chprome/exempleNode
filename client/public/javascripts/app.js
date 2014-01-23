@@ -8,32 +8,23 @@ var Personnes = Backbone.Collection.extend({
 });
 
 module.exports = Personnes;
-},{"../model/Personne":3,"backbone":7}],2:[function(require,module,exports){
+},{"../model/Personne":3,"backbone":6}],2:[function(require,module,exports){
 var Backbone = require('backbone');
 Backbone.$ = require('jquery');
 window.$ = require('jquery');
 
 var PersonneFormView = require('./view/PersonneFormView'),
-    PersonneView = require('./view/PersonneView'),
     PersonnesCollectionView = require('./view/PersonnesCollectionView'),
-    Personnes = require('./collection/Personnes'),
-    Personne = require('./model/Personne');
+    Personnes = require('./collection/Personnes');
 
 window.onload = function() {
-    // var personne = new Personne();
-    // var personneView = new PersonneView({model:personne});
-    // new PersonneFormView({model:personne});
-    
-    // personne.fetch();
-    // personneView.render();
-
     var personnes = new Personnes();
     new PersonnesCollectionView({collection : personnes}).renderInit();
     new PersonneFormView({collection: personnes}).render();
 
     personnes.fetch({reset: true});
 };
-},{"./collection/Personnes":1,"./model/Personne":3,"./view/PersonneFormView":4,"./view/PersonneView":5,"./view/PersonnesCollectionView":6,"backbone":7,"jquery":8}],3:[function(require,module,exports){
+},{"./collection/Personnes":1,"./view/PersonneFormView":4,"./view/PersonnesCollectionView":5,"backbone":6,"jquery":7}],3:[function(require,module,exports){
 var Backbone = require('backbone');
 
 var Personne = Backbone.Model.extend({
@@ -58,7 +49,7 @@ var Personne = Backbone.Model.extend({
 });
 
 module.exports = Personne;
-},{"backbone":7}],4:[function(require,module,exports){
+},{"backbone":6}],4:[function(require,module,exports){
 var Backbone = require('backbone'),
     Personne = require('../model/Personne'),
     _ = require('underscore'),
@@ -106,34 +97,14 @@ var PersonneFormView = Backbone.View.extend({
 });
 
 module.exports = PersonneFormView;
-},{"../model/Personne":3,"backbone":7,"jquery":8,"underscore":9}],5:[function(require,module,exports){
-var Backbone = require('backbone'),
-    _ = require('underscore'),
-    $ = require('jquery');
-
-var PersonneView = Backbone.View.extend({
-    el: $('#personne-wrapper'),
-
-    initialize: function(){
-        this.model.bind('change', this.render.bind(this));
-    },
-    render: function(){
-        var template = _.template( $('#personne-tpl').html(), this.model.toJSON() );
-        this.$el.html(template);
-        return this;
-    }
-});
-    
-// var personneView = new PersonneView({ el: $('body') });
-
-module.exports = PersonneView;
-},{"backbone":7,"jquery":8,"underscore":9}],6:[function(require,module,exports){
+},{"../model/Personne":3,"backbone":6,"jquery":7,"underscore":8}],5:[function(require,module,exports){
 var Backbone = require('backbone'),
     _ = require('underscore'),
     $ = require('jquery');
 
 var PersonneCollectionView = Backbone.View.extend({
     el: $('#personnes-wrapper'),
+    template: $('#personnes-tpl').html(),
 
     initialize: function(){
         _.bindAll(this, 'renderAll', 'renderInit');
@@ -143,20 +114,20 @@ var PersonneCollectionView = Backbone.View.extend({
     },
 
     renderInit: function(){
-        var template = _.template( $('#personnes-tpl').html(), {init: true} );
-        this.$el.html(template);
+        var html = _.template(this.template , {init: true} );
+        this.$el.html(html);
         return this;
     },
 
     renderAll: function(){
-        var template = _.template( $('#personnes-tpl').html(), {init: false, personnes: this.collection.toJSON()} );
-        this.$el.html(template);
+        var html = _.template( this.template, {init: false, personnes: this.collection.toJSON()} );
+        this.$el.html(html);
         return this;
     }
 });
 
 module.exports = PersonneCollectionView;
-},{"backbone":7,"jquery":8,"underscore":9}],7:[function(require,module,exports){
+},{"backbone":6,"jquery":7,"underscore":8}],6:[function(require,module,exports){
 //     Backbone.js 1.1.0
 
 //     (c) 2010-2011 Jeremy Ashkenas, DocumentCloud Inc.
@@ -1739,7 +1710,7 @@ module.exports = PersonneCollectionView;
 
 }).call(this);
 
-},{"underscore":9}],8:[function(require,module,exports){
+},{"underscore":8}],7:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.0-rc1
  * http://jquery.com/
@@ -10856,7 +10827,7 @@ return jQuery;
 
 }));
 
-},{}],9:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 //     Underscore.js 1.5.2
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
