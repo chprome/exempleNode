@@ -9,16 +9,16 @@ var PersonneFormView = require('./view/PersonneFormView'),
     Personne = require('./model/Personne');
 
 window.onload = function() {
-   // var personne = new Personne();
-   // var personneView = new PersonneView({model:personne});
-   // new PersonneFormView({model:personne});
+    // var personne = new Personne();
+    // var personneView = new PersonneView({model:personne});
+    // new PersonneFormView({model:personne});
+    
+    // personne.fetch();
+    // personneView.render();
 
-   // personne.fetch();
-   // personneView.render();
+    var personnes = new Personnes();
+    new PersonnesCollectionView({collection : personnes}).render();
+    new PersonneFormView({collection: personnes}).render();
 
-   var personnes = new Personnes();
-   new PersonnesCollectionView({collection : personnes}).render();
-   new PersonneFormView({collection: personnes}).render();
-
-   personnes.fetch();
+    personnes.fetch({reset: true});
 };

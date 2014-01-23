@@ -3,10 +3,7 @@ var Backbone = require('backbone'),
 
 var Personnes = Backbone.Collection.extend({
     url: '/personnes',
-    model : Personne,
-    initialize : function() {
-        console.log('Personnes collection init');
-    }
+    model : Personne
 });
 
 module.exports = Personnes;

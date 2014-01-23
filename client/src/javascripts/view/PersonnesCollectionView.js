@@ -7,9 +7,8 @@ var PersonneCollectionView = Backbone.View.extend({
 
     initialize: function(){
         _.bindAll(this, 'render');
-        this.collection.bind('change', this.render);
         this.collection.bind('add', this.render);
-        this.collection.bind('remove', this.render);
+        this.collection.bind('reset', this.render);
     },
     render: function(){
         var template = _.template( $('#personnes-tpl').html(), {personnes: this.collection.toJSON()} );

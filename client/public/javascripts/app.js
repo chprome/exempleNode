@@ -4,10 +4,7 @@ var Backbone = require('backbone'),
 
 var Personnes = Backbone.Collection.extend({
     url: '/personnes',
-    model : Personne,
-    initialize : function() {
-        console.log('Personnes collection init');
-    }
+    model : Personne
 });
 
 module.exports = Personnes;
@@ -23,18 +20,18 @@ var PersonneFormView = require('./view/PersonneFormView'),
     Personne = require('./model/Personne');
 
 window.onload = function() {
-   // var personne = new Personne();
-   // var personneView = new PersonneView({model:personne});
-   // new PersonneFormView({model:personne});
+    // var personne = new Personne();
+    // var personneView = new PersonneView({model:personne});
+    // new PersonneFormView({model:personne});
+    
+    // personne.fetch();
+    // personneView.render();
 
-   // personne.fetch();
-   // personneView.render();
+    var personnes = new Personnes();
+    new PersonnesCollectionView({collection : personnes}).render();
+    new PersonneFormView({collection: personnes}).render();
 
-   var personnes = new Personnes();
-   new PersonnesCollectionView({collection : personnes}).render();
-   new PersonneFormView({collection: personnes}).render();
-
-   personnes.fetch();
+    personnes.fetch({reset: true});
 };
 },{"./collection/Personnes":1,"./model/Personne":3,"./view/PersonneFormView":4,"./view/PersonneView":5,"./view/PersonnesCollectionView":6,"backbone":7,"jquery":8}],3:[function(require,module,exports){
 var Backbone = require('backbone');
@@ -64,6 +61,7 @@ module.exports = Personne;
 },{"backbone":7}],4:[function(require,module,exports){
 var Backbone = require('backbone'),
     Personne = require('../model/Personne'),
+    _ = require('underscore'),
     $ = require('jquery');
 
 var PersonneFormView = Backbone.View.extend({
@@ -71,7 +69,7 @@ var PersonneFormView = Backbone.View.extend({
     nomEl : $('#nom'),
 
     initialize : function() {
-        //Nothing to do now
+        _.bindAll(this, 'onSuccess', 'onError');
     },
     
     events : {
@@ -84,7 +82,7 @@ var PersonneFormView = Backbone.View.extend({
             nom : this.nomEl.val().trim()
         });
 
-        if(model.save(null, {success: this.onSuccess.bind(this)}, {error: this.onError.bind(this)})) {
+        if(model.save(null, {success: this.onSuccess}, {error: this.onError})) {
             this.nomEl.val('');
         } else {
             console.log('validation error: '+model.validationError);
@@ -108,7 +106,7 @@ var PersonneFormView = Backbone.View.extend({
 });
 
 module.exports = PersonneFormView;
-},{"../model/Personne":3,"backbone":7,"jquery":8}],5:[function(require,module,exports){
+},{"../model/Personne":3,"backbone":7,"jquery":8,"underscore":9}],5:[function(require,module,exports){
 var Backbone = require('backbone'),
     _ = require('underscore'),
     $ = require('jquery');
@@ -139,9 +137,8 @@ var PersonneCollectionView = Backbone.View.extend({
 
     initialize: function(){
         _.bindAll(this, 'render');
-        this.collection.bind('change', this.render);
         this.collection.bind('add', this.render);
-        this.collection.bind('remove', this.render);
+        this.collection.bind('reset', this.render);
     },
     render: function(){
         var template = _.template( $('#personnes-tpl').html(), {personnes: this.collection.toJSON()} );

@@ -1,5 +1,6 @@
 var Backbone = require('backbone'),
     Personne = require('../model/Personne'),
+    _ = require('underscore'),
     $ = require('jquery');
 
 var PersonneFormView = Backbone.View.extend({
@@ -7,7 +8,7 @@ var PersonneFormView = Backbone.View.extend({
     nomEl : $('#nom'),
 
     initialize : function() {
-        //Nothing to do now
+        _.bindAll(this, 'onSuccess', 'onError');
     },
     
     events : {
@@ -20,7 +21,7 @@ var PersonneFormView = Backbone.View.extend({
             nom : this.nomEl.val().trim()
         });
 
-        if(model.save(null, {success: this.onSuccess.bind(this)}, {error: this.onError.bind(this)})) {
+        if(model.save(null, {success: this.onSuccess}, {error: this.onError})) {
             this.nomEl.val('');
         } else {
             console.log('validation error: '+model.validationError);
