@@ -9,18 +9,33 @@ var PersonneFormView = Backbone.View.extend({
     initialize : function() {
         //Nothing to do now
     },
+    
     events : {
         'submit form' : 'addPersonne'
     },
+
     addPersonne : function(e) {
         e.preventDefault();
-        var newPersonne = new Personne({
-            nom : this.nomEl.val()
+        var model = new Personne({
+            nom : this.nomEl.val().trim()
         });
-        newPersonne.save();
-        this.collection.add(newPersonne);
-        this.nomEl.val('');
+
+        if(model.save(null, {success: this.onSuccess.bind(this)}, {error: this.onError.bind(this)})) {
+            this.nomEl.val('');
+        } else {
+            console.log('validation error: '+model.validationError);
+        }
+
     },
+
+    onSuccess: function(model, response, options) {
+        this.collection.add(model);
+    },
+
+    onError: function(model, xhr, options) {
+        console.log('error');
+    },
+
     error : function(model, error) {
         console.log(model, error);
         return this;
