@@ -1,4 +1,6 @@
-var Backbone = require('backbone');
+var Backbone = require('backbone'),
+    Personne = require('../model/Personne'),
+    $ = require('jquery');
 
 var PersonneFormView = Backbone.View.extend({
     el : $('#personne-form'),
@@ -8,12 +10,15 @@ var PersonneFormView = Backbone.View.extend({
         //Nothing to do now
     },
     events : {
-        'submit form' : 'setName'
+        'submit form' : 'addPersonne'
     },
-    setName : function(e) {
+    addPersonne : function(e) {
         e.preventDefault();
-        this.model.set('nom',this.nomEl.val());
-        this.model.save();
+        var newPersonne = new Personne({
+            nom : this.nomEl.val()
+        });
+        newPersonne.save();
+        this.collection.add(newPersonne);
         this.nomEl.val('');
     },
     error : function(model, error) {

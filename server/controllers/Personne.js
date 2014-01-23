@@ -29,6 +29,12 @@ module.exports = {
         }
     },
 
+    fetch : function findAll(req, res) {
+        Personne.find({}, function(err, personnes) {
+            res.json(personnes);
+        });
+    },
+
     update: function update(req, res) {
 
         if(req.body._id && req.body.nom) {

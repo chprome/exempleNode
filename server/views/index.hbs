@@ -5,8 +5,20 @@
     </form>
 </div>
 
-<div id="personne-wrapper"></div>
+<div id="personnes-wrapper"></div>
 
 <script type="text/template" id="personne-tpl">
     Hello <span><%= _id %></span> - <span><%= nom %></span>
+</script>
+
+<script type="text/template" id="personnes-tpl">
+    <ol>
+    <% if (personnes.length === 0) { %>
+        Rien à afficher
+    <% } else { %>
+        <% _.each(personnes, function(personne) { %>
+            <li><%= personne._id %> : <%= personne.nom %></li>
+        <% }); %>
+    <% } %>
+    </ol>
 </script>

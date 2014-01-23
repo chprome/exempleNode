@@ -1,5 +1,6 @@
 var Backbone = require('backbone'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    $ = require('jquery');
 
 var PersonneView = Backbone.View.extend({
     el: $('#personne-wrapper'),
