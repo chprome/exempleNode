@@ -3,7 +3,6 @@ var Backbone = require('backbone'),
     $ = require('jquery');
 
 var PersonneView = Backbone.View.extend({
-    el: $('#personne-wrapper'),
     template: $('#personne-tpl').html(),
 
     initialize: function(){

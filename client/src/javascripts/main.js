@@ -8,7 +8,7 @@ var PersonneFormView = require('./view/PersonneFormView'),
 
 window.onload = function() {
     var personnes = new Personnes();
-    new PersonnesCollectionView({collection : personnes}).renderInit();
+    new PersonnesCollectionView({collection : personnes}).render();
     new PersonneFormView({collection: personnes}).render();
 
     personnes.fetch({reset: true});

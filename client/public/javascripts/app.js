@@ -8,7 +8,7 @@ var Personnes = Backbone.Collection.extend({
 });
 
 module.exports = Personnes;
-},{"../model/Personne":3,"backbone":6}],2:[function(require,module,exports){
+},{"../model/Personne":3,"backbone":7}],2:[function(require,module,exports){
 var Backbone = require('backbone');
 Backbone.$ = require('jquery');
 window.$ = require('jquery');
@@ -19,12 +19,12 @@ var PersonneFormView = require('./view/PersonneFormView'),
 
 window.onload = function() {
     var personnes = new Personnes();
-    new PersonnesCollectionView({collection : personnes}).renderInit();
+    new PersonnesCollectionView({collection : personnes}).render();
     new PersonneFormView({collection: personnes}).render();
 
     personnes.fetch({reset: true});
 };
-},{"./collection/Personnes":1,"./view/PersonneFormView":4,"./view/PersonnesCollectionView":5,"backbone":6,"jquery":7}],3:[function(require,module,exports){
+},{"./collection/Personnes":1,"./view/PersonneFormView":4,"./view/PersonnesCollectionView":6,"backbone":7,"jquery":8}],3:[function(require,module,exports){
 var Backbone = require('backbone');
 
 var Personne = Backbone.Model.extend({
@@ -49,7 +49,7 @@ var Personne = Backbone.Model.extend({
 });
 
 module.exports = Personne;
-},{"backbone":6}],4:[function(require,module,exports){
+},{"backbone":7}],4:[function(require,module,exports){
 var Backbone = require('backbone'),
     Personne = require('../model/Personne'),
     _ = require('underscore'),
@@ -97,37 +97,61 @@ var PersonneFormView = Backbone.View.extend({
 });
 
 module.exports = PersonneFormView;
-},{"../model/Personne":3,"backbone":6,"jquery":7,"underscore":8}],5:[function(require,module,exports){
+},{"../model/Personne":3,"backbone":7,"jquery":8,"underscore":9}],5:[function(require,module,exports){
 var Backbone = require('backbone'),
     _ = require('underscore'),
     $ = require('jquery');
+
+var PersonneView = Backbone.View.extend({
+    template: $('#personne-tpl').html(),
+
+    initialize: function(){
+        this.model.bind('change', this.render.bind(this));
+    },
+    render: function(){
+        var html = _.template( this.template, this.model.toJSON() );
+        this.$el.html(html);
+        return this;
+    }
+});
+    
+// var personneView = new PersonneView({ el: $('body') });
+
+module.exports = PersonneView;
+},{"backbone":7,"jquery":8,"underscore":9}],6:[function(require,module,exports){
+var Backbone = require('backbone'),
+    _ = require('underscore'),
+    $ = require('jquery'),
+    PersonneView = require('./PersonneView');
 
 var PersonneCollectionView = Backbone.View.extend({
     el: $('#personnes-wrapper'),
     template: $('#personnes-tpl').html(),
 
     initialize: function(){
-        _.bindAll(this, 'renderAll', 'renderInit');
-        this.collection.bind('add', this.renderInit);
-        this.collection.bind('add', this.renderAll);
-        this.collection.bind('reset', this.renderAll);
+        _.bindAll(this, 'addAll', 'addOne');
+        this.collection.bind('add', this.addOne);
+        this.collection.bind('reset', this.addAll);
     },
 
-    renderInit: function(){
+    render: function(){
         var html = _.template(this.template , {init: true} );
         this.$el.html(html);
-        return this;
     },
 
-    renderAll: function(){
-        var html = _.template( this.template, {init: false, personnes: this.collection.toJSON()} );
-        this.$el.html(html);
-        return this;
+    addOne: function(personne) {
+        var view = new PersonneView({model: personne});
+        this.$el.append(view.render().el);
+    },
+
+    addAll: function(){
+        this.$el.html('');
+        this.collection.each(this.addOne, this);
     }
 });
 
 module.exports = PersonneCollectionView;
-},{"backbone":6,"jquery":7,"underscore":8}],6:[function(require,module,exports){
+},{"./PersonneView":5,"backbone":7,"jquery":8,"underscore":9}],7:[function(require,module,exports){
 //     Backbone.js 1.1.0
 
 //     (c) 2010-2011 Jeremy Ashkenas, DocumentCloud Inc.
@@ -1710,7 +1734,7 @@ module.exports = PersonneCollectionView;
 
 }).call(this);
 
-},{"underscore":8}],7:[function(require,module,exports){
+},{"underscore":9}],8:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.0-rc1
  * http://jquery.com/
@@ -10827,7 +10851,7 @@ return jQuery;
 
 }));
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 //     Underscore.js 1.5.2
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
