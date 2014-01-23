@@ -13,12 +13,16 @@
 
 <script type="text/template" id="personnes-tpl">
     <ol>
-    <% if (personnes.length === 0) { %>
-        Rien à afficher
+    <% if (init) { %>
+        Chargement ...
     <% } else { %>
-        <% _.each(personnes, function(personne) { %>
-            <li><%= personne._id %> : <%= personne.nom %></li>
-        <% }); %>
+        <% if (personnes.length === 0) { %>
+            Rien à afficher
+        <% } else { %>
+            <% _.each(personnes, function(personne) { %>
+                <li><%= personne._id %> : <%= personne.nom %></li>
+            <% }); %>
+        <% } %>
     <% } %>
     </ol>
 </script>

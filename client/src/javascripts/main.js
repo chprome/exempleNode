@@ -17,7 +17,7 @@ window.onload = function() {
     // personneView.render();
 
     var personnes = new Personnes();
-    new PersonnesCollectionView({collection : personnes}).render();
+    new PersonnesCollectionView({collection : personnes}).renderInit();
     new PersonneFormView({collection: personnes}).render();
 
     personnes.fetch({reset: true});

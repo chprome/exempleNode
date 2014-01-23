@@ -6,12 +6,20 @@ var PersonneCollectionView = Backbone.View.extend({
     el: $('#personnes-wrapper'),
 
     initialize: function(){
-        _.bindAll(this, 'render');
-        this.collection.bind('add', this.render);
-        this.collection.bind('reset', this.render);
+        _.bindAll(this, 'renderAll', 'renderInit');
+        this.collection.bind('add', this.renderInit);
+        this.collection.bind('add', this.renderAll);
+        this.collection.bind('reset', this.renderAll);
     },
-    render: function(){
-        var template = _.template( $('#personnes-tpl').html(), {personnes: this.collection.toJSON()} );
+
+    renderInit: function(){
+        var template = _.template( $('#personnes-tpl').html(), {init: true} );
+        this.$el.html(template);
+        return this;
+    },
+
+    renderAll: function(){
+        var template = _.template( $('#personnes-tpl').html(), {init: false, personnes: this.collection.toJSON()} );
         this.$el.html(template);
         return this;
     }
