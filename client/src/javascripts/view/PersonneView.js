@@ -6,7 +6,8 @@ var PersonneView = Backbone.View.extend({
     template: $('#personne-tpl').html(),
 
     initialize: function(){
-        _.bindAll(this, 'render', 'remove');
+        this.state = 'normal';
+        _.bindAll(this, 'render', 'onDestroy', 'onDestroyFailed');
         this.model.bind('change', this.render);
     },
 
@@ -15,13 +16,25 @@ var PersonneView = Backbone.View.extend({
     },
 
     render: function(){
-        var html = _.template( this.template, this.model.toJSON() );
+        var html = _.template( this.template, {model: this.model.toJSON(), state: this.state} );
         this.$el.html(html);
         return this;
     },
 
     destroy: function() {
-        this.model.destroy({wait: true, success: this.remove});
+        this.state = 'destroying';
+        // TODO ne pas avoir à appeler directement render(), passer par un binding de this.state ?
+        this.render();
+        this.model.destroy({wait: true, success: this.onDestroy, error: this.onDestroyFailed});
+    },
+
+    onDestroy: function() {
+        this.state = 'destroyed';
+        this.remove();
+    },
+
+    onDestroyFailed: function() {
+        this.state = 'destroyFailed';
     }
 });
     
