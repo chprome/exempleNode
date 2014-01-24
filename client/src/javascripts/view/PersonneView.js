@@ -6,7 +6,8 @@ var PersonneView = Backbone.View.extend({
     template: $('#personne-tpl').html(),
 
     initialize: function(){
-        this.model.bind('change', this.render.bind(this));
+        _.bindAll(this, 'render', 'remove');
+        this.model.bind('change', this.render);
     },
 
     events : {
@@ -20,7 +21,7 @@ var PersonneView = Backbone.View.extend({
     },
 
     destroy: function() {
-        this.model.destroy({wait: true});
+        this.model.destroy({wait: true, success: this.remove});
     }
 });
     

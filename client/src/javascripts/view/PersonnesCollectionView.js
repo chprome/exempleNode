@@ -9,7 +9,6 @@ var PersonneCollectionView = Backbone.View.extend({
 
     initialize: function(){
         _.bindAll(this, 'addAll', 'addOne');
-        this.collection.bind('remove', this.addAll);
         this.collection.bind('add', this.addOne);
         this.collection.bind('reset', this.addAll);
     },

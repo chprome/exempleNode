@@ -21,8 +21,13 @@ module.exports = {
         if(req.body.nom) {
             var personne = new Personne();
             personne.nom = req.body.nom;
-            personne.save();
-            res.json(personne);
+            personne.save(function(err, personne) {
+                if(err) {
+                    res.json(500, 'can\'t save: '+err);
+                } else {
+                    res.json(personne);
+                }
+            });
         }
         else {
             res.json(400,'nom vide');

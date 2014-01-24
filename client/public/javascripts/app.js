@@ -106,7 +106,8 @@ var PersonneView = Backbone.View.extend({
     template: $('#personne-tpl').html(),
 
     initialize: function(){
-        this.model.bind('change', this.render.bind(this));
+        _.bindAll(this, 'render', 'remove');
+        this.model.bind('change', this.render);
     },
 
     events : {
@@ -120,7 +121,7 @@ var PersonneView = Backbone.View.extend({
     },
 
     destroy: function() {
-        this.model.destroy({wait: true});
+        this.model.destroy({wait: true, success: this.remove});
     }
 });
     
@@ -139,7 +140,6 @@ var PersonneCollectionView = Backbone.View.extend({
 
     initialize: function(){
         _.bindAll(this, 'addAll', 'addOne');
-        this.collection.bind('remove', this.addAll);
         this.collection.bind('add', this.addOne);
         this.collection.bind('reset', this.addAll);
     },
@@ -1746,7 +1746,7 @@ module.exports = PersonneCollectionView;
 
 },{"underscore":9}],8:[function(require,module,exports){
 /*!
- * jQuery JavaScript Library v2.1.0-rc1
+ * jQuery JavaScript Library v2.1.0
  * http://jquery.com/
  *
  * Includes Sizzle.js
@@ -1756,7 +1756,7 @@ module.exports = PersonneCollectionView;
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2014-01-16T19:51Z
+ * Date: 2014-01-23T21:10Z
  */
 
 (function( global, factory ) {
@@ -1816,7 +1816,7 @@ var
 	// Use the correct document accordingly with window argument (sandbox)
 	document = window.document,
 
-	version = "2.1.0-rc1",
+	version = "2.1.0",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -4370,14 +4370,14 @@ jQuery.filter = function( expr, elems, not ) {
 
 jQuery.fn.extend({
 	find: function( selector ) {
-		var i = 0,
+		var i,
 			len = this.length,
 			ret = [],
 			self = this;
 
 		if ( typeof selector !== "string" ) {
 			return this.pushStack( jQuery( selector ).filter(function() {
-				for ( ; i < len; i++ ) {
+				for ( i = 0; i < len; i++ ) {
 					if ( jQuery.contains( self[ i ], this ) ) {
 						return true;
 					}
@@ -4385,8 +4385,7 @@ jQuery.fn.extend({
 			}) );
 		}
 
-		i = 0;
-		for ( ; i < len; i++ ) {
+		for ( i = 0; i < len; i++ ) {
 			jQuery.find( selector, self[ i ], ret );
 		}
 
@@ -5719,8 +5718,7 @@ var rcheckableType = (/^(?:checkbox|radio)$/i);
 
 
 (function() {
-	var input,
-		fragment = document.createDocumentFragment(),
+	var fragment = document.createDocumentFragment(),
 		div = fragment.appendChild( document.createElement( "div" ) );
 
 	// #11217 - WebKit loses check when the name is after the checked attribute
@@ -5730,12 +5728,10 @@ var rcheckableType = (/^(?:checkbox|radio)$/i);
 	// old WebKit doesn't clone checked state correctly in fragments
 	support.checkClone = div.cloneNode( true ).cloneNode( true ).lastChild.checked;
 
-	// Make sure checked status is properly cloned
-	// Support: IE9, IE10
-	input = document.createElement("input");
-	input.type = "checkbox";
-	input.checked = true;
-	support.noCloneChecked = input.cloneNode( true ).checked;
+	// Make sure textarea (and checkbox) defaultValue is properly cloned
+	// Support: IE9-IE11+
+	div.innerHTML = "<textarea>x</textarea>";
+	support.noCloneChecked = !!div.cloneNode( true ).lastChild.defaultValue;
 })();
 var strundefined = typeof undefined;
 
