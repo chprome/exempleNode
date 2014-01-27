@@ -1,11 +1,19 @@
-<div id="personne-form">
+<div id="menu">
+    <ul>
+        <li/><a href="/ui">Index</a>
+        <li/><a href="/ui/other">Other</a>
+    </ul>
+</div>
+
+<div id="main-wrapper">
+</div>
+
+<script type="text/template" id="form-tpl">
     <form action="/">
         <input id="nom" placeholder="Votre nom"/>
         <button>OK</button>
     </form>
-</div>
-
-<div id="personnes-wrapper"></div>
+</script>
 
 <script type="text/template" id="personne-tpl">
     <span class="personne-<%= state %>"><%= model._id %></span> - <span><%= model.nom %></span> <button class="destroy">X</button>
@@ -17,4 +25,8 @@
         Chargement ...
     <% } %>
     </ol>
+</script>
+
+<script type="text/template" id="other-tpl">
+    Other page
 </script>

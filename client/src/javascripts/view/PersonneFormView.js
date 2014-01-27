@@ -4,8 +4,7 @@ var Backbone = require('backbone'),
     $ = require('jquery');
 
 var PersonneFormView = Backbone.View.extend({
-    el : $('#personne-form'),
-    nomEl : $('#nom'),
+    template: $('#form-tpl').html(),
 
     initialize : function() {
         _.bindAll(this, 'onSuccess', 'onError');
@@ -15,14 +14,21 @@ var PersonneFormView = Backbone.View.extend({
         'submit form' : 'addPersonne'
     },
 
+    render : function() {
+        var html = _.template( this.template )();
+        this.el.innerHTML = html;
+        $('#main-wrapper').append(this.el);
+        return this;
+    },
+
     addPersonne : function(e) {
         e.preventDefault();
         var model = new Personne({
-            nom : this.nomEl.val().trim()
+            nom : $('#nom').val().trim()
         });
 
         if(model.save(null, {success: this.onSuccess}, {error: this.onError})) {
-            this.nomEl.val('');
+            $('#nom').val('');
         } else {
             console.log('validation error: '+model.validationError);
         }

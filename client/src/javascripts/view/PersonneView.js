@@ -11,6 +11,7 @@ var PersonneView = Backbone.View.extend({
         this.model.bind('change', this.render);
     },
 
+
     events : {
         'click .destroy' : 'destroy'
     },

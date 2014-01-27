@@ -4,7 +4,6 @@ var Backbone = require('backbone'),
     PersonneView = require('./PersonneView');
 
 var PersonneCollectionView = Backbone.View.extend({
-    el: $('#personnes-wrapper'),
     template: $('#personnes-tpl').html(),
 
     initialize: function(){
@@ -15,7 +14,8 @@ var PersonneCollectionView = Backbone.View.extend({
 
     render: function(){
         var html = _.template(this.template , {init: true} );
-        this.$el.html(html);
+        this.el.innerHTML = html;
+        $('#main-wrapper').append(this.el);
     },
 
     addOne: function(personne) {

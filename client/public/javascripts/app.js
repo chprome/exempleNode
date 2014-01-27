@@ -1,5 +1,57 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var Backbone = require('backbone'),
+    PersonneFormView = require('./view/PersonneFormView'),
+    PersonnesCollectionView = require('./view/PersonnesCollectionView'),
+    OtherView = require('./view/OtherView'),
+    Personnes = require('./collection/Personnes'),
+    $ = require('jquery');
+
+var Workspace = Backbone.Router.extend({
+
+  views: [],
+
+  routes: {
+    'ui':             'index',
+    'ui/other':       'other'
+  },
+
+  index: function() {
+    this._clearViews();
+    var personnes = new Personnes();
+    var personneFormView = new PersonneFormView({collection: personnes});
+    personneFormView.render();
+    var personneCollectionView = new PersonnesCollectionView({collection : personnes});
+    personneCollectionView.render();
+
+    this.views.push(personneCollectionView);
+    this.views.push(personneFormView);
+
+    personnes.fetch({reset: true});
+  },
+
+  other: function(query, page) {
+    this._clearViews();
+    var otherView = new OtherView();
+    otherView.render();
+    this.views.push(otherView);
+  },
+
+  _clearViews: function() {
+    this.views.forEach(function(view) {
+      view.remove();
+    });
+
+    this.views.length = 0;
+
+    // TODO dégeux
+    $('#main-wrapper').empty();
+  }
+
+});
+
+module.exports = Workspace;
+},{"./collection/Personnes":2,"./view/OtherView":5,"./view/PersonneFormView":6,"./view/PersonnesCollectionView":8,"backbone":9,"jquery":10}],2:[function(require,module,exports){
+var Backbone = require('backbone'),
     Personne = require('../model/Personne');
 
 var Personnes = Backbone.Collection.extend({
@@ -8,23 +60,30 @@ var Personnes = Backbone.Collection.extend({
 });
 
 module.exports = Personnes;
-},{"../model/Personne":3,"backbone":7}],2:[function(require,module,exports){
-var Backbone = require('backbone');
+},{"../model/Personne":4,"backbone":9}],3:[function(require,module,exports){
+var Backbone = require('backbone'),
+    Workspace = require('./Workspace');
+
 Backbone.$ = require('jquery');
 window.$ = require('jquery');
 
-var PersonneFormView = require('./view/PersonneFormView'),
-    PersonnesCollectionView = require('./view/PersonnesCollectionView'),
-    Personnes = require('./collection/Personnes');
+$(document).on('click', 'a:not([data-bypass])', function(evt) {
+
+    var href = $(this).attr('href');
+    var protocol = this.protocol + '//';
+
+    if (href && href.slice(0, protocol.length) !== protocol &&
+        href.indexOf('javascript:') !== 0) {
+        evt.preventDefault();
+        Backbone.history.navigate(href, true);
+    }
+});
 
 window.onload = function() {
-    var personnes = new Personnes();
-    new PersonnesCollectionView({collection : personnes}).render();
-    new PersonneFormView({collection: personnes}).render();
-
-    personnes.fetch({reset: true});
+    Backbone.history.start({pushState: true});
+    new Workspace();
 };
-},{"./collection/Personnes":1,"./view/PersonneFormView":4,"./view/PersonnesCollectionView":6,"backbone":7,"jquery":8}],3:[function(require,module,exports){
+},{"./Workspace":1,"backbone":9,"jquery":10}],4:[function(require,module,exports){
 var Backbone = require('backbone');
 
 var Personne = Backbone.Model.extend({
@@ -49,15 +108,36 @@ var Personne = Backbone.Model.extend({
 });
 
 module.exports = Personne;
-},{"backbone":7}],4:[function(require,module,exports){
+},{"backbone":9}],5:[function(require,module,exports){
+var Backbone = require('backbone'),
+    _ = require('underscore'),
+    $ = require('jquery');
+
+var PersonneFormView = Backbone.View.extend({
+    template: $('#other-tpl').html(),
+
+    initialize : function() {
+        
+    },
+
+    render: function() {
+        var html = _.template( this.template )();
+        this.el.innerHTML = html;
+        $('#main-wrapper').append(this.el);
+        return this;
+    }
+
+});
+
+module.exports = PersonneFormView;
+},{"backbone":9,"jquery":10,"underscore":11}],6:[function(require,module,exports){
 var Backbone = require('backbone'),
     Personne = require('../model/Personne'),
     _ = require('underscore'),
     $ = require('jquery');
 
 var PersonneFormView = Backbone.View.extend({
-    el : $('#personne-form'),
-    nomEl : $('#nom'),
+    template: $('#form-tpl').html(),
 
     initialize : function() {
         _.bindAll(this, 'onSuccess', 'onError');
@@ -67,14 +147,21 @@ var PersonneFormView = Backbone.View.extend({
         'submit form' : 'addPersonne'
     },
 
+    render : function() {
+        var html = _.template( this.template )();
+        this.el.innerHTML = html;
+        $('#main-wrapper').append(this.el);
+        return this;
+    },
+
     addPersonne : function(e) {
         e.preventDefault();
         var model = new Personne({
-            nom : this.nomEl.val().trim()
+            nom : $('#nom').val().trim()
         });
 
         if(model.save(null, {success: this.onSuccess}, {error: this.onError})) {
-            this.nomEl.val('');
+            $('#nom').val('');
         } else {
             console.log('validation error: '+model.validationError);
         }
@@ -97,7 +184,7 @@ var PersonneFormView = Backbone.View.extend({
 });
 
 module.exports = PersonneFormView;
-},{"../model/Personne":3,"backbone":7,"jquery":8,"underscore":9}],5:[function(require,module,exports){
+},{"../model/Personne":4,"backbone":9,"jquery":10,"underscore":11}],7:[function(require,module,exports){
 var Backbone = require('backbone'),
     _ = require('underscore'),
     $ = require('jquery');
@@ -110,6 +197,7 @@ var PersonneView = Backbone.View.extend({
         _.bindAll(this, 'render', 'onDestroy', 'onDestroyFailed');
         this.model.bind('change', this.render);
     },
+
 
     events : {
         'click .destroy' : 'destroy'
@@ -141,14 +229,13 @@ var PersonneView = Backbone.View.extend({
 // var personneView = new PersonneView({ el: $('body') });
 
 module.exports = PersonneView;
-},{"backbone":7,"jquery":8,"underscore":9}],6:[function(require,module,exports){
+},{"backbone":9,"jquery":10,"underscore":11}],8:[function(require,module,exports){
 var Backbone = require('backbone'),
     _ = require('underscore'),
     $ = require('jquery'),
     PersonneView = require('./PersonneView');
 
 var PersonneCollectionView = Backbone.View.extend({
-    el: $('#personnes-wrapper'),
     template: $('#personnes-tpl').html(),
 
     initialize: function(){
@@ -159,7 +246,8 @@ var PersonneCollectionView = Backbone.View.extend({
 
     render: function(){
         var html = _.template(this.template , {init: true} );
-        this.$el.html(html);
+        this.el.innerHTML = html;
+        $('#main-wrapper').append(this.el);
     },
 
     addOne: function(personne) {
@@ -174,7 +262,7 @@ var PersonneCollectionView = Backbone.View.extend({
 });
 
 module.exports = PersonneCollectionView;
-},{"./PersonneView":5,"backbone":7,"jquery":8,"underscore":9}],7:[function(require,module,exports){
+},{"./PersonneView":7,"backbone":9,"jquery":10,"underscore":11}],9:[function(require,module,exports){
 //     Backbone.js 1.1.0
 
 //     (c) 2010-2011 Jeremy Ashkenas, DocumentCloud Inc.
@@ -1757,9 +1845,9 @@ module.exports = PersonneCollectionView;
 
 }).call(this);
 
-},{"underscore":9}],8:[function(require,module,exports){
+},{"underscore":11}],10:[function(require,module,exports){
 /*!
- * jQuery JavaScript Library v2.1.0
+ * jQuery JavaScript Library v2.1.0-rc1
  * http://jquery.com/
  *
  * Includes Sizzle.js
@@ -1769,7 +1857,7 @@ module.exports = PersonneCollectionView;
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2014-01-23T21:10Z
+ * Date: 2014-01-16T19:51Z
  */
 
 (function( global, factory ) {
@@ -1829,7 +1917,7 @@ var
 	// Use the correct document accordingly with window argument (sandbox)
 	document = window.document,
 
-	version = "2.1.0",
+	version = "2.1.0-rc1",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -4383,14 +4471,14 @@ jQuery.filter = function( expr, elems, not ) {
 
 jQuery.fn.extend({
 	find: function( selector ) {
-		var i,
+		var i = 0,
 			len = this.length,
 			ret = [],
 			self = this;
 
 		if ( typeof selector !== "string" ) {
 			return this.pushStack( jQuery( selector ).filter(function() {
-				for ( i = 0; i < len; i++ ) {
+				for ( ; i < len; i++ ) {
 					if ( jQuery.contains( self[ i ], this ) ) {
 						return true;
 					}
@@ -4398,7 +4486,8 @@ jQuery.fn.extend({
 			}) );
 		}
 
-		for ( i = 0; i < len; i++ ) {
+		i = 0;
+		for ( ; i < len; i++ ) {
 			jQuery.find( selector, self[ i ], ret );
 		}
 
@@ -5731,7 +5820,8 @@ var rcheckableType = (/^(?:checkbox|radio)$/i);
 
 
 (function() {
-	var fragment = document.createDocumentFragment(),
+	var input,
+		fragment = document.createDocumentFragment(),
 		div = fragment.appendChild( document.createElement( "div" ) );
 
 	// #11217 - WebKit loses check when the name is after the checked attribute
@@ -5741,10 +5831,12 @@ var rcheckableType = (/^(?:checkbox|radio)$/i);
 	// old WebKit doesn't clone checked state correctly in fragments
 	support.checkClone = div.cloneNode( true ).cloneNode( true ).lastChild.checked;
 
-	// Make sure textarea (and checkbox) defaultValue is properly cloned
-	// Support: IE9-IE11+
-	div.innerHTML = "<textarea>x</textarea>";
-	support.noCloneChecked = !!div.cloneNode( true ).lastChild.defaultValue;
+	// Make sure checked status is properly cloned
+	// Support: IE9, IE10
+	input = document.createElement("input");
+	input.type = "checkbox";
+	input.checked = true;
+	support.noCloneChecked = input.cloneNode( true ).checked;
 })();
 var strundefined = typeof undefined;
 
@@ -10870,7 +10962,7 @@ return jQuery;
 
 }));
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 //     Underscore.js 1.5.2
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -12148,4 +12240,4 @@ return jQuery;
 
 }).call(this);
 
-},{}]},{},[2])
+},{}]},{},[1,3])
